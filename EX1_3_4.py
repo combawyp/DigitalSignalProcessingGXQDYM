@@ -6,7 +6,7 @@
 @Description: In User Settings Edit
 @FilePath: \DigitalSignalProcessingGXQDYM\Ex1_3_4.py
 '''
-
+ 
 from scipy import signal
 import matplotlib.pyplot
 import numpy
