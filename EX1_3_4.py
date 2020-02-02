@@ -7,35 +7,48 @@
 @FilePath: \DigitalSignalProcessingGXQDYM\Ex1_3_4.py
 '''
  
-from scipy import signal
-import matplotlib.pyplot
+'''
+ 一个平均滤波器的差分方程，如下：
+ y(n)= 1/5*[x(n)+x(n-1)+x(n-2)+x(n-3)+x(n-4)]
+ 当输入信号x为一个序列，如下：
+ x[0~15]= [0.6, 0.6, 0.6, 1.0, 0.6, 0.6, 0.6, 1.0,0.6, 0.6, 0.6, 1.0,0.6, 0.6, 0.6]
+ 显示输出
+'''
+
 import numpy
-import scipy
+import scipy.signal
+import matplotlib.pyplot
 
-Fs  = 2000
-Wn  = 300
-n   = 4
+# 输入信号
+x   = (0.6, 0.6, 0.6, 1.0, 0.6, 0.6, 0.6, 1.0,0.6, 0.6, 0.6, 1.0,0.6, 0.6, 0.6)
+xn  = numpy.asarray(x)
+print(xn)
 
-b,a = scipy.signal.butter(n,Wn,btype='lowpass',analog=True)
-bz,az   = scipy.signal.bilinear(b,a,Fs)
+# 根据差分方程来的单位脉冲响应 h(x)
+h   = (0.2, 0.2, 0.2, 0.2, 0.2)
+hn  = numpy.asarray(h)
+print(hn)
 
-Wd, Hd  = signal.freqz(bz,az,512,Fs)
+# 计算卷积
+yn  = scipy.signal.convolve(hn, xn)
+print(yn)
 
-fig, ax1 = matplotlib.pyplot.subplots()
-ax1.set_title('frequency response')
-ax1.plot(Wd/numpy.pi, 20 * numpy.log10(abs(Hd)), 'b')
-ax1.set_ylabel('Amplitude [dB]', color='b')
-ax1.set_xlabel('Frequency [pi*rad/sample]')
-ax1.set_xlim([0,1])
+# 构造显示的 x 轴刻度
+n       = numpy.arange(0, len(yn), 1, dtype=int)
+print(n)
 
-ax2 = ax1.twinx()
-angles = numpy.angle(Hd, deg=True)
-ax2.plot(Wd/numpy.pi, angles, 'g')
-ax2.set_ylabel('Angle (degrees)', color='g')
-ax2.grid()
-ax2.axis('tight')
-ax2.set_xlim([0,1])
-
+# 为了让输入输出在一个图里显示，扩展输入长度
+xn_dis  = numpy.append(xn, numpy.zeros(len(yn)-len(xn)))
+print(xn_dis)
+# 使用 figure 函数给绘图命名
+matplotlib.pyplot.figure('例 1.3.4')
+# 使用 subplot 函数设置图的排列
+matplotlib.pyplot.subplot(111)
+# 使用 plot 函数绘制输出，标注方式 o
+matplotlib.pyplot.plot(n, yn, '-o')
+# 使用 plot 函数绘制输入，标注方式 x
+matplotlib.pyplot.plot(n, xn_dis, '-x')
+# 使用 show 函数显示
 matplotlib.pyplot.show()
 
 # EOF
